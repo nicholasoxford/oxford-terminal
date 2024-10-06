@@ -11,6 +11,7 @@ pub const TradingMenuState = enum {
 };
 
 pub var fetchingStockInfo: bool = false;
+pub var hasFetchedInfo: bool = false;
 
 pub const TradingMenu = struct {
     app_state: *AppState.AppState,
@@ -45,6 +46,11 @@ pub const TradingMenu = struct {
                 // Handle FetchStockInfo state
                 if (ray.IsKeyPressed(ray.KEY_ESCAPE)) {
                     self.state = .TradingMenu;
+                    fetchingStockInfo = false;
+                    hasFetchedInfo = false;
+                    FetchStockInfo.tickerSymbol = [_]u8{0} ** (FetchStockInfo.MAX_INPUT_CHARS + 1);
+                    FetchStockInfo.letterCount = 0;
+                    FetchStockInfo.framesCounter = 0;
                 }
             },
             .BackToMainMenu => {
@@ -59,7 +65,7 @@ pub const TradingMenu = struct {
                 self.menu.draw();
                 ray.DrawText("Algorithmic Trading State", 190, 200, 20, ray.WHITE);
             },
-            .FetchStockInfo => FetchStockInfo.FetchStockInfo.drawState(&fetchingStockInfo),
+            .FetchStockInfo => FetchStockInfo.FetchStockInfo.drawState(&fetchingStockInfo, &hasFetchedInfo),
             .BackToMainMenu => {}, // This state should immediately transition back to the main menu
         }
     }

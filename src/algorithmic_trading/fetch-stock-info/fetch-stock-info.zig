@@ -2,9 +2,7 @@ const ray = @import("../../raylib.zig");
 const std = @import("std");
 
 const TICKER_INPUT_BOX: ray.Rectangle = ray.Rectangle{ .x = 190, .y = 220, .width = 200, .height = 30 };
-const MAX_INPUT_CHARS: usize = 9;
-
-pub var hasFetchedInfo: bool = false;
+pub const MAX_INPUT_CHARS: usize = 9;
 
 pub var mouseOnTickerInput: bool = false;
 pub var tickerSymbol: [MAX_INPUT_CHARS + 1]u8 = [_]u8{0} ** (MAX_INPUT_CHARS + 1);
@@ -12,15 +10,15 @@ pub var letterCount: usize = 0;
 pub var framesCounter: i32 = 0;
 
 pub const FetchStockInfo = struct {
-    pub fn drawState(fetchingStockInfo: *bool) void {
+    pub fn drawState(fetchingStockInfo: *bool, hasFetchedInfo: *bool) void {
         // print fetchingStockInfo
         std.debug.print("fetchingStockInfo: {}\n", .{fetchingStockInfo.*});
-        if (hasFetchedInfo) {
+        if (hasFetchedInfo.*) {
             drawGraph();
         } else if (fetchingStockInfo.*) {
             drawFetchingStockInfo();
         } else {
-            drawTickerInput(fetchingStockInfo);
+            drawTickerInput(fetchingStockInfo, hasFetchedInfo);
         }
     }
 };
@@ -35,7 +33,7 @@ fn drawFetchingStockInfo() void {
     ray.DrawText(@ptrCast(fetchingSlice.ptr), 190, 200, 20, ray.WHITE);
 }
 
-fn drawTickerInput(fetchingStockInfo: *bool) void {
+fn drawTickerInput(fetchingStockInfo: *bool, hasFetchedInfo: *bool) void {
     ray.DrawText("Enter ticker symbol:", 190, 200, 20, ray.WHITE);
 
     if (ray.CheckCollisionPointRec(ray.GetMousePosition(), TICKER_INPUT_BOX)) {
@@ -69,18 +67,14 @@ fn drawTickerInput(fetchingStockInfo: *bool) void {
     }
 
     if (ray.IsKeyPressed(ray.KEY_ESCAPE)) {
-        fetchingStockInfo.* = false;
-        hasFetchedInfo = false;
-        letterCount = 0;
-        // empty tickerSymbol
         for (0..tickerSymbol.len) |i| {
             tickerSymbol[i] = 0;
         }
-    }
+        fetchingStockInfo.* = false;
+        hasFetchedInfo.* = false;
+        letterCount = 0;
+        // set tickerSymbol to empty string
 
-    if (ray.IsKeyPressed(ray.KEY_ENTER)) {
-        std.debug.print("Enter pressed\n", .{});
-        fetchingStockInfo.* = true;
     }
 
     ray.DrawRectangleRec(TICKER_INPUT_BOX, ray.LIGHTGRAY);
@@ -100,5 +94,9 @@ fn drawTickerInput(fetchingStockInfo: *bool) void {
         } else {
             ray.DrawText("Press BACKSPACE to delete chars...", 230, 300, 20, ray.GRAY);
         }
+    }
+    if (ray.IsKeyPressed(ray.KEY_ENTER)) {
+        std.debug.print("Enter pressed\n", .{});
+        fetchingStockInfo.* = true;
     }
 }
