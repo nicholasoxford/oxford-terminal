@@ -13,6 +13,8 @@ pub var framesCounter: i32 = 0;
 
 pub const FetchStockInfo = struct {
     pub fn drawState(fetchingStockInfo: *bool) void {
+        // print fetchingStockInfo
+        std.debug.print("fetchingStockInfo: {}\n", .{fetchingStockInfo.*});
         if (hasFetchedInfo) {
             drawGraph();
         } else if (fetchingStockInfo.*) {
@@ -33,7 +35,7 @@ fn drawFetchingStockInfo() void {
     ray.DrawText(@ptrCast(fetchingSlice.ptr), 190, 200, 20, ray.WHITE);
 }
 
-fn drawTickerInput(fetchingStockInfo: bool) void {
+fn drawTickerInput(fetchingStockInfo: *bool) void {
     ray.DrawText("Enter ticker symbol:", 190, 200, 20, ray.WHITE);
 
     if (ray.CheckCollisionPointRec(ray.GetMousePosition(), TICKER_INPUT_BOX)) {
@@ -67,7 +69,7 @@ fn drawTickerInput(fetchingStockInfo: bool) void {
     }
 
     if (ray.IsKeyPressed(ray.KEY_ESCAPE)) {
-        fetchingStockInfo = false;
+        fetchingStockInfo.* = false;
         hasFetchedInfo = false;
         letterCount = 0;
         // empty tickerSymbol
@@ -77,7 +79,8 @@ fn drawTickerInput(fetchingStockInfo: bool) void {
     }
 
     if (ray.IsKeyPressed(ray.KEY_ENTER)) {
-        fetchingStockInfo = true;
+        std.debug.print("Enter pressed\n", .{});
+        fetchingStockInfo.* = true;
     }
 
     ray.DrawRectangleRec(TICKER_INPUT_BOX, ray.LIGHTGRAY);
