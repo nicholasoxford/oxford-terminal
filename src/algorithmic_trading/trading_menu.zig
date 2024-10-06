@@ -10,6 +10,8 @@ pub const TradingMenuState = enum {
     BackToMainMenu,
 };
 
+pub var fetchingStockInfo: bool = false;
+
 pub const TradingMenu = struct {
     app_state: *AppState.AppState,
     menu: MenuModule.Menu,
@@ -57,7 +59,7 @@ pub const TradingMenu = struct {
                 self.menu.draw();
                 ray.DrawText("Algorithmic Trading State", 190, 200, 20, ray.WHITE);
             },
-            .FetchStockInfo => FetchStockInfo.FetchStockInfo.drawState(),
+            .FetchStockInfo => FetchStockInfo.FetchStockInfo.drawState(&fetchingStockInfo),
             .BackToMainMenu => {}, // This state should immediately transition back to the main menu
         }
     }
@@ -68,6 +70,7 @@ fn fetchStockInfoAction() void {
     if (AppState.current_app_state) |state_ptr| {
         if (state_ptr.* == .AlgorithmicTrading) {
             if (AppState.current_trading_menu) |trading_menu| {
+                // set appstate to
                 trading_menu.state = .FetchStockInfo;
             }
         }
