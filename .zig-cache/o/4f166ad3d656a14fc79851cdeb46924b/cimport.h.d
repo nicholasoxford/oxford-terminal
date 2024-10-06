@@ -1,0 +1,21 @@
+cimport.o: \
+  /Users/noxford/Documents/zigraylib/.zig-cache/o/4f166ad3d656a14fc79851cdeb46924b/cimport.h \
+  /Users/noxford/Documents/zigraylib/.zig-cache/o/8a47a619fee50c203dfbfcf9592ac08d/raylib.h \
+  /opt/homebrew/Cellar/zig/0.13.0/lib/zig/include/stdarg.h \
+  /opt/homebrew/Cellar/zig/0.13.0/lib/zig/include/__stdarg___gnuc_va_list.h \
+  /opt/homebrew/Cellar/zig/0.13.0/lib/zig/include/__stdarg_va_list.h \
+  /opt/homebrew/Cellar/zig/0.13.0/lib/zig/include/__stdarg_va_arg.h \
+  /opt/homebrew/Cellar/zig/0.13.0/lib/zig/include/__stdarg___va_copy.h \
+  /opt/homebrew/Cellar/zig/0.13.0/lib/zig/include/__stdarg_va_copy.h \
+  /opt/homebrew/Cellar/zig/0.13.0/lib/zig/include/stdbool.h \
+  /Users/noxford/Documents/zigraylib/.zig-cache/o/8a47a619fee50c203dfbfcf9592ac08d/raymath.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/math.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/sys/cdefs.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/sys/_symbol_aliasing.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/sys/_posix_availability.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/Availability.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/AvailabilityVersions.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/AvailabilityInternal.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/AvailabilityInternalLegacy.h \
+  /Users/noxford/Documents/zigraylib/.zig-cache/o/8a47a619fee50c203dfbfcf9592ac08d/rlgl.h \
+  /Users/noxford/Documents/zigraylib/.zig-cache/o/8a47a619fee50c203dfbfcf9592ac08d/raygui.h

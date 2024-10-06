@@ -3,23 +3,18 @@ const ray = @import("raylib.zig");
 
 pub fn main() !void {
     try ray_main();
-    try old_main(); // remove this if you don't need it
-    try hints();
 }
 
 fn ray_main() !void {
-    // const monitor = ray.GetCurrentMonitor();
-    // const width = ray.GetMonitorWidth(monitor);
-    // const height = ray.GetMonitorHeight(monitor);
     const width = 800;
-    const height = 450;
-
+    const height = 800;
     ray.SetConfigFlags(ray.FLAG_MSAA_4X_HINT | ray.FLAG_VSYNC_HINT);
-    ray.InitWindow(width, height, "zig raylib example");
+    ray.InitWindow(width, height, "Zig Raylib Example");
+    ray.SetExitKey(ray.KEY_NULL);
+
     defer ray.CloseWindow();
 
     var gpa = std.heap.GeneralPurposeAllocator(.{ .stack_trace_frames = 8 }){};
-    const allocator = gpa.allocator();
     defer {
         switch (gpa.deinit()) {
             .leak => @panic("leaked memory"),
@@ -27,73 +22,166 @@ fn ray_main() !void {
         }
     }
 
-    const colors = [_]ray.Color{ ray.GRAY, ray.RED, ray.GOLD, ray.LIME, ray.BLUE, ray.VIOLET, ray.BROWN };
-    const colors_len: i32 = @intCast(colors.len);
-    var current_color: i32 = 2;
-    var hint = true;
+    // Application state
+    var app_state = AppState.Menu;
 
+    // Selected menu option
+    var selected_menu_option: MenuOption = .FirstOption;
+
+    // Main loop
     while (!ray.WindowShouldClose()) {
-        // input
-        var delta: i2 = 0;
-        if (ray.IsKeyPressed(ray.KEY_UP)) delta += 1;
-        if (ray.IsKeyPressed(ray.KEY_DOWN)) delta -= 1;
-        if (delta != 0) {
-            current_color = @mod(current_color + delta, colors_len);
-            hint = false;
+        // Update
+        switch (app_state) {
+            .Menu => {
+                handleMenuState(&app_state, &selected_menu_option);
+            },
+            .AlgorithmicTrading => {
+                handleAlgorithmicTradingState(&app_state);
+            },
+            // Add more states as needed
         }
 
-        // draw
+        // Draw
         {
             ray.BeginDrawing();
             defer ray.EndDrawing();
 
-            ray.ClearBackground(colors[@intCast(current_color)]);
-            if (hint) ray.DrawText("press up or down arrow to change background color", 120, 140, 20, ray.BLUE);
-            ray.DrawText("Congrats! You created your first window!", 190, 200, 20, ray.BLACK);
+            ray.ClearBackground(ray.BLACK);
 
-            // now lets use an allocator to create some dynamic text
-            // pay attention to the Z in `allocPrintZ` that is a convention
-            // for functions that return zero terminated strings
-            const seconds: u32 = @intFromFloat(ray.GetTime());
-            const dynamic = try std.fmt.allocPrintZ(allocator, "running since {d} seconds", .{seconds});
-            defer allocator.free(dynamic);
-            ray.DrawText(dynamic, 300, 250, 20, ray.WHITE);
-
-            ray.DrawFPS(width - 100, 10);
+            switch (app_state) {
+                .Menu => {
+                    drawMenu(selected_menu_option);
+                },
+                .AlgorithmicTrading => {
+                    drawAlgorithmicTrading();
+                },
+                // Add more states as needed
+            }
         }
     }
 }
 
-// remove this function if you don't need it
-fn old_main() !void {
-    // Prints to stderr (it's a shortcut based on `std.io.getStdErr()`)
-    std.debug.print("All your {s} are belong to us.\n", .{"codebase"});
+// Application states
+const AppState = enum {
+    Menu,
+    AlgorithmicTrading,
+    // Add more states as needed
+};
 
-    // stdout is for the actual output of your application, for example if you
-    // are implementing gzip, then only the compressed bytes should be sent to
-    // stdout, not any debugging messages.
-    const stdout_file = std.io.getStdOut().writer();
-    var bw = std.io.bufferedWriter(stdout_file);
-    const stdout = bw.writer();
+// Menu options
+const MenuOption = enum {
+    FirstOption,
+    SecondOption,
+    ThirdOption,
+};
 
-    try stdout.print("Run `zig build test` to run the tests.\n", .{});
+fn handleMenuState(app_state: *AppState, selected_menu_option: *MenuOption) void {
+    // Handle menu input
 
-    try bw.flush(); // don't forget to flush!
+    const mouse_pos = ray.GetMousePosition();
+
+    const menu_options = [_][]const u8{
+        "Algorithmic Trading",
+        "Neural Networks",
+        "Leetcode Notes",
+    };
+
+    const base_x = 120;
+    var y: c_int = 50;
+    const font_size = 40;
+
+    var found_hover = false;
+
+    for (menu_options, 0..) |option, index| {
+        const text_width = ray.MeasureText(option.ptr, font_size);
+        const text_height = font_size; // Approximate text height
+        const rect = ray.Rectangle{
+            .x = @as(f32, @floatFromInt(base_x)),
+            .y = @as(f32, @floatFromInt(y)),
+            .width = @as(f32, @floatFromInt(text_width)),
+            .height = @as(f32, @floatFromInt(text_height)),
+        };
+        if (ray.CheckCollisionPointRec(mouse_pos, rect)) {
+            selected_menu_option.* = @enumFromInt(index);
+            found_hover = true;
+            if (ray.IsMouseButtonPressed(ray.MOUSE_LEFT_BUTTON)) {
+                // Transition to the next state based on selected option
+                switch (selected_menu_option.*) {
+                    .FirstOption => {
+                        app_state.* = .AlgorithmicTrading;
+                    },
+                    .SecondOption => {
+                        // Handle second option
+                    },
+                    .ThirdOption => {
+                        // Handle third option
+                    },
+                }
+            }
+        }
+        y += font_size + 10;
+    }
+
+    // If mouse is not over any option, handle keyboard input
+    if (!found_hover) {
+        if (ray.IsKeyPressed(ray.KEY_UP)) {
+            if (@intFromEnum(selected_menu_option.*) > 0) {
+                selected_menu_option.* = @enumFromInt(@intFromEnum(selected_menu_option.*) - 1);
+            }
+        }
+        if (ray.IsKeyPressed(ray.KEY_DOWN)) {
+            if (@intFromEnum(selected_menu_option.*) < @intFromEnum(MenuOption.ThirdOption)) {
+                selected_menu_option.* = @enumFromInt(@intFromEnum(selected_menu_option.*) + 1);
+            }
+        }
+        if (ray.IsKeyPressed(ray.KEY_ENTER)) {
+            // Transition to the next state based on selected option
+            switch (selected_menu_option.*) {
+                .FirstOption => {
+                    app_state.* = .AlgorithmicTrading;
+                },
+                .SecondOption => {
+                    // Handle second option
+                },
+                .ThirdOption => {
+                    // Handle third option
+                },
+            }
+        }
+    }
 }
 
-fn hints() !void {
-    const stdout_file = std.io.getStdOut().writer();
-    var bw = std.io.bufferedWriter(stdout_file);
-    const stdout = bw.writer();
+fn drawMenu(selected_menu_option: MenuOption) void {
+    const menu_options = [_][]const u8{
+        "Algorithmic Trading",
+        "Neural Networks",
+        "Leetcode Notes",
+    };
 
-    try stdout.print("\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯\n", .{});
-    try stdout.print("Here are some hints:\n", .{});
-    try stdout.print("Run `zig build --help` to see all the options\n", .{});
-    try stdout.print("Run `zig build -Doptimize=ReleaseSmall` for a small release build\n", .{});
-    try stdout.print("Run `zig build -Doptimize=ReleaseSmall -Dstrip=true` for a smaller release build, that strips symbols\n", .{});
-    try stdout.print("Run `zig build -Draylib-optimize=ReleaseFast` for a debug build of your application, that uses a fast release of raylib (if you are only debugging your code)\n", .{});
+    const base_x = 120;
+    var y: c_int = 50;
+    const font_size = 40;
 
-    try bw.flush(); // don't forget to flush!
+    for (menu_options, 0..) |option, index| {
+        const color = if (index == @intFromEnum(selected_menu_option)) ray.GREEN else ray.WHITE;
+        ray.DrawText(option.ptr, base_x, y, font_size, color);
+        y += font_size + 10;
+    }
+}
+
+fn handleAlgorithmicTradingState(app_state: *AppState) void {
+    // Handle game input and logic
+    // print key pressed
+    if (ray.IsKeyPressed(ray.KEY_ESCAPE)) {
+        // Return to menu
+        app_state.* = .Menu;
+    }
+    // Add game logic here
+}
+
+fn drawAlgorithmicTrading() void {
+    ray.DrawText("Algorithmic Trading State", 190, 200, 20, ray.WHITE);
+    // Draw game elements here
 }
 
 test "simple test" {

@@ -1,0 +1,20 @@
+cimport.o: \
+  /Users/noxford/Documents/zigraylib/.zig-cache/o/a9ff8e829194403edf0722de750df1a7/cimport.h \
+  /Users/noxford/Documents/zigraylib/.zig-cache/o/b4d59211823fe72c9e516ea8e7338a85/raylib.h \
+  /opt/homebrew/Cellar/zig/0.13.0/lib/zig/include/stdarg.h \
+  /opt/homebrew/Cellar/zig/0.13.0/lib/zig/include/__stdarg___gnuc_va_list.h \
+  /opt/homebrew/Cellar/zig/0.13.0/lib/zig/include/__stdarg_va_list.h \
+  /opt/homebrew/Cellar/zig/0.13.0/lib/zig/include/__stdarg_va_arg.h \
+  /opt/homebrew/Cellar/zig/0.13.0/lib/zig/include/__stdarg___va_copy.h \
+  /opt/homebrew/Cellar/zig/0.13.0/lib/zig/include/__stdarg_va_copy.h \
+  /opt/homebrew/Cellar/zig/0.13.0/lib/zig/include/stdbool.h \
+  /Users/noxford/Documents/zigraylib/.zig-cache/o/b4d59211823fe72c9e516ea8e7338a85/raymath.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/math.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/sys/cdefs.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/sys/_symbol_aliasing.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/sys/_posix_availability.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/Availability.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/AvailabilityVersions.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/AvailabilityInternal.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/usr/include/AvailabilityInternalLegacy.h \
+  /Users/noxford/Documents/zigraylib/.zig-cache/o/b4d59211823fe72c9e516ea8e7338a85/rlgl.h
