@@ -1,4 +1,5 @@
 const std = @import("std");
+const raylib = @import("raylib");
 
 // Although this function looks imperative, note that its job is to
 // declaratively construct a build graph that will be executed by an external
@@ -16,7 +17,7 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const exe = b.addExecutable(.{
-        .name = "zigraylib",
+        .name = "oxford_terminal",
         // In this case the main source file is merely a path, however, in more
         // complicated build scripts, this could be a generated file.
         .root_source_file = b.path("src/main.zig"),
@@ -36,8 +37,6 @@ pub fn build(b: *std.Build) void {
         "Strip debug info to reduce binary size, defaults to false",
     ) orelse false;
     exe.root_module.strip = strip;
-
-    const raylib = @import("raylib");
 
     const raylib_artifact = try raylib.addRaylib(b, target, raylib_optimize, .{
         .raygui = true,

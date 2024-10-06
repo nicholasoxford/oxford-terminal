@@ -1,15 +1,19 @@
 const std = @import("std");
 const ray = @import("raylib.zig");
 
+const AppState = @import("app_state.zig");
+const MainMenu = @import("main_menu/main_menu.zig");
+const TradingMenu = @import("algorithmic_trading/trading_menu.zig").TradingMenu;
+
 pub fn main() !void {
-    try ray_main();
+    try rayMain();
 }
 
-fn ray_main() !void {
+fn rayMain() !void {
     const width = 800;
     const height = 800;
     ray.SetConfigFlags(ray.FLAG_MSAA_4X_HINT | ray.FLAG_VSYNC_HINT);
-    ray.InitWindow(width, height, "Zig Raylib Example");
+    ray.InitWindow(width, height, "Oxford Terminal");
     ray.SetExitKey(ray.KEY_NULL);
 
     defer ray.CloseWindow();
@@ -23,165 +27,60 @@ fn ray_main() !void {
     }
 
     // Application state
-    var app_state = AppState.Menu;
+    var app_state = AppState.AppState.Menu;
+    AppState.current_app_state = &app_state; // Initialize the global pointer
+
+    var trading_menu = TradingMenu.init(&app_state);
+    AppState.current_trading_menu = &trading_menu;
 
     // Selected menu option
-    var selected_menu_option: MenuOption = .FirstOption;
+    var main_menu = MainMenu.MainMenu.init(&app_state);
 
     // Main loop
     while (!ray.WindowShouldClose()) {
         // Update
         switch (app_state) {
             .Menu => {
-                handleMenuState(&app_state, &selected_menu_option);
+                main_menu.handleState();
             },
             .AlgorithmicTrading => {
-                handleAlgorithmicTradingState(&app_state);
+                trading_menu.handleState();
             },
-            // Add more states as needed
+            .NeuralNetworks => {
+                // Handle Neural Networks state
+            },
+            .LeetcodeNotes => {
+                // Handle Leetcode Notes state
+            },
+            .Exit => {
+                break; // Exit the main loop
+            },
         }
 
         // Draw
-        {
-            ray.BeginDrawing();
-            defer ray.EndDrawing();
+        ray.BeginDrawing();
+        defer ray.EndDrawing();
 
-            ray.ClearBackground(ray.BLACK);
+        ray.ClearBackground(ray.BLACK);
 
-            switch (app_state) {
-                .Menu => {
-                    drawMenu(selected_menu_option);
-                },
-                .AlgorithmicTrading => {
-                    drawAlgorithmicTrading();
-                },
-                // Add more states as needed
-            }
+        switch (app_state) {
+            .Menu => {
+                main_menu.drawState();
+            },
+            .AlgorithmicTrading => {
+                trading_menu.drawState();
+            },
+            .NeuralNetworks => {
+                // Draw Neural Networks state
+            },
+            .LeetcodeNotes => {
+                // Draw Leetcode Notes state
+            },
+            .Exit => {
+                // Optionally, display a goodbye message or perform cleanup
+            },
         }
     }
-}
-
-// Application states
-const AppState = enum {
-    Menu,
-    AlgorithmicTrading,
-    // Add more states as needed
-};
-
-// Menu options
-const MenuOption = enum {
-    FirstOption,
-    SecondOption,
-    ThirdOption,
-};
-
-fn handleMenuState(app_state: *AppState, selected_menu_option: *MenuOption) void {
-    // Handle menu input
-
-    const mouse_pos = ray.GetMousePosition();
-
-    const menu_options = [_][]const u8{
-        "Algorithmic Trading",
-        "Neural Networks",
-        "Leetcode Notes",
-    };
-
-    const base_x = 120;
-    var y: c_int = 50;
-    const font_size = 40;
-
-    var found_hover = false;
-
-    for (menu_options, 0..) |option, index| {
-        const text_width = ray.MeasureText(option.ptr, font_size);
-        const text_height = font_size; // Approximate text height
-        const rect = ray.Rectangle{
-            .x = @as(f32, @floatFromInt(base_x)),
-            .y = @as(f32, @floatFromInt(y)),
-            .width = @as(f32, @floatFromInt(text_width)),
-            .height = @as(f32, @floatFromInt(text_height)),
-        };
-        if (ray.CheckCollisionPointRec(mouse_pos, rect)) {
-            selected_menu_option.* = @enumFromInt(index);
-            found_hover = true;
-            if (ray.IsMouseButtonPressed(ray.MOUSE_LEFT_BUTTON)) {
-                // Transition to the next state based on selected option
-                switch (selected_menu_option.*) {
-                    .FirstOption => {
-                        app_state.* = .AlgorithmicTrading;
-                    },
-                    .SecondOption => {
-                        // Handle second option
-                    },
-                    .ThirdOption => {
-                        // Handle third option
-                    },
-                }
-            }
-        }
-        y += font_size + 10;
-    }
-
-    // If mouse is not over any option, handle keyboard input
-    if (!found_hover) {
-        if (ray.IsKeyPressed(ray.KEY_UP)) {
-            if (@intFromEnum(selected_menu_option.*) > 0) {
-                selected_menu_option.* = @enumFromInt(@intFromEnum(selected_menu_option.*) - 1);
-            }
-        }
-        if (ray.IsKeyPressed(ray.KEY_DOWN)) {
-            if (@intFromEnum(selected_menu_option.*) < @intFromEnum(MenuOption.ThirdOption)) {
-                selected_menu_option.* = @enumFromInt(@intFromEnum(selected_menu_option.*) + 1);
-            }
-        }
-        if (ray.IsKeyPressed(ray.KEY_ENTER)) {
-            // Transition to the next state based on selected option
-            switch (selected_menu_option.*) {
-                .FirstOption => {
-                    app_state.* = .AlgorithmicTrading;
-                },
-                .SecondOption => {
-                    // Handle second option
-                },
-                .ThirdOption => {
-                    // Handle third option
-                },
-            }
-        }
-    }
-}
-
-fn drawMenu(selected_menu_option: MenuOption) void {
-    const menu_options = [_][]const u8{
-        "Algorithmic Trading",
-        "Neural Networks",
-        "Leetcode Notes",
-    };
-
-    const base_x = 120;
-    var y: c_int = 50;
-    const font_size = 40;
-
-    for (menu_options, 0..) |option, index| {
-        const color = if (index == @intFromEnum(selected_menu_option)) ray.GREEN else ray.WHITE;
-        ray.DrawText(option.ptr, base_x, y, font_size, color);
-        y += font_size + 10;
-    }
-}
-
-fn handleAlgorithmicTradingState(app_state: *AppState) void {
-    // Handle game input and logic
-    // print key pressed
-    if (ray.IsKeyPressed(ray.KEY_ESCAPE)) {
-        // Return to menu
-        app_state.* = .Menu;
-    }
-    // Add game logic here
-}
-
-fn drawAlgorithmicTrading() void {
-    ray.DrawText("Algorithmic Trading State", 190, 200, 20, ray.WHITE);
-    // Draw game elements here
 }
 
 test "simple test" {
