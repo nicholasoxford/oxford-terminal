@@ -30,7 +30,7 @@ fn rayMain() !void {
     var app_state = AppState.AppState.Menu;
     AppState.current_app_state = &app_state; // Initialize the global pointer
 
-    var trading_menu = TradingMenu.init(&app_state);
+    var trading_menu = TradingMenu.init(&app_state, gpa.allocator());
     AppState.current_trading_menu = &trading_menu;
 
     // Selected menu option

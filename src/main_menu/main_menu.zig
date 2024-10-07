@@ -1,3 +1,4 @@
+const std = @import("std");
 const ray = @import("../raylib.zig");
 const AppState = @import("../app_state.zig");
 const MenuModule = @import("../ui/menu.zig");
@@ -18,7 +19,7 @@ pub const MainMenu = struct {
                 },
                 .font_size = 30,
                 .base_x = 120,
-                .base_y = 50,
+                .base_y = 80,
             },
         };
     }
@@ -29,7 +30,13 @@ pub const MainMenu = struct {
 
     pub fn drawState(self: MainMenu) void {
         self.menu.draw();
-        ray.DrawText("Main Menu", 190, 20, 40, ray.WHITE);
+        const MAIN_MENU_TEXT = "Main Menu";
+        // center text
+        const text_width = ray.MeasureText(MAIN_MENU_TEXT, self.menu.font_size);
+
+        const text_x = @divTrunc(ray.GetScreenWidth() - text_width, 2);
+
+        ray.DrawText(MAIN_MENU_TEXT, text_x, 40, self.menu.font_size, ray.WHITE);
     }
 };
 

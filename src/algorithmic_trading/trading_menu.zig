@@ -2,7 +2,7 @@ const ray = @import("../raylib.zig");
 const std = @import("std");
 const AppState = @import("../app_state.zig");
 const MenuModule = @import("../ui/menu.zig");
-const FetchStockInfo = @import("./fetch-stock-info/fetch-stock-info.zig");
+const FetchStockInfo = @import("./fetch-stock-info/fetch-stock-info.zig").FetchStockInfo;
 
 pub const TradingMenuState = enum {
     TradingMenu,
@@ -17,8 +17,10 @@ pub const TradingMenu = struct {
     app_state: *AppState.AppState,
     menu: MenuModule.Menu,
     state: TradingMenuState,
+    fetch_stock_info: FetchStockInfo,
 
-    pub fn init(app_state: *AppState.AppState) TradingMenu {
+    pub fn init(app_state: *AppState.AppState, allocator: std.mem.Allocator) TradingMenu {
+        std.debug.print("TradingMenu init called\n", .{});
         return .{
             .app_state = app_state,
             .menu = MenuModule.Menu{
@@ -31,7 +33,13 @@ pub const TradingMenu = struct {
                 .base_y = 50,
             },
             .state = .TradingMenu,
+            .fetch_stock_info = FetchStockInfo.init(allocator),
         };
+    }
+
+    pub fn deinit(self: *TradingMenu) void {
+        std.debug.print("TradingMenu deinit called\n", .{});
+        self.fetch_stock_info.deinit();
     }
 
     pub fn handleState(self: *TradingMenu) void {
@@ -48,9 +56,6 @@ pub const TradingMenu = struct {
                     self.state = .TradingMenu;
                     fetchingStockInfo = false;
                     hasFetchedInfo = false;
-                    FetchStockInfo.tickerSymbol = [_]u8{0} ** (FetchStockInfo.MAX_INPUT_CHARS + 1);
-                    FetchStockInfo.letterCount = 0;
-                    FetchStockInfo.framesCounter = 0;
                 }
             },
             .BackToMainMenu => {
@@ -59,13 +64,13 @@ pub const TradingMenu = struct {
         }
     }
 
-    pub fn drawState(self: TradingMenu) void {
+    pub fn drawState(self: *TradingMenu) void {
         switch (self.state) {
             .TradingMenu => {
                 self.menu.draw();
                 ray.DrawText("Algorithmic Trading State", 190, 200, 20, ray.WHITE);
             },
-            .FetchStockInfo => FetchStockInfo.FetchStockInfo.drawState(&fetchingStockInfo, &hasFetchedInfo),
+            .FetchStockInfo => self.fetch_stock_info.drawState(&fetchingStockInfo, &hasFetchedInfo),
             .BackToMainMenu => {}, // This state should immediately transition back to the main menu
         }
     }
