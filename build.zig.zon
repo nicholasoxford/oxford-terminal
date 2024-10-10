@@ -10,6 +10,14 @@
             .url = "https://github.com/raysan5/raygui/archive/604d2d6ce4dfd072033b2311fd8adaba66654bde.tar.gz",
             .hash = "1220864a314db60a5e43df335d496c5bbe6ca82c6f2a98e9f34d3c1b00df312a79a3",
         },
+        .macos_sdk = .{
+            .url = "https://github.com/mitchellh/zig-build-macos-sdk/archive/a4ea24f105902111633c6ae9f888b676ac5e36df.tar.gz",
+            .hash = "12209cc9ee372456eda52b71cf9ae77dcc707fa42c9f9d68996b5bf7495b53229c2e",
+        },
+        .zig_objc = .{
+            .url = "https://github.com/mitchellh/zig-objc/archive/fe5ac419530cf800294369d996133fe9cd067aec.tar.gz",
+            .hash = "122034b3e15d582d8d101a7713e5f13c872b8b8eb6d9cb47515b8e34ee75e122630d",
+        },
     },
     .paths = .{
         "build.zig",

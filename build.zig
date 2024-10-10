@@ -17,6 +17,8 @@ pub fn build(b: *std.Build) void {
     // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
 
+    // const add_paths = b.option(bool, "add-paths", "add macos SDK paths from dependency") orelse false;
+
     const exe = b.addExecutable(.{
         .name = "oxford_terminal",
         // In this case the main source file is merely a path, however, in more
@@ -26,10 +28,24 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
+    exe.linkFramework("CoreData");
+    exe.linkFramework("ApplicationServices");
+    exe.linkFramework("CoreFoundation");
+    exe.linkFramework("CoreGraphics");
+    exe.linkFramework("CoreText");
+    exe.linkFramework("CoreServices");
+    exe.linkFramework("Foundation");
+    exe.linkFramework("AppKit");
+    exe.linkFramework("ColorSync");
+    exe.linkFramework("ImageIO");
+    exe.linkFramework("CFNetwork");
+    exe.linkSystemLibrary(
+        "objc",
+    );
+
     // Add curl to your executable
     exe.linkSystemLibrary("curl");
     exe.linkLibC();
-
     const raylib_optimize = b.option(
         std.builtin.OptimizeMode,
         "raylib-optimize",
@@ -47,6 +63,13 @@ pub fn build(b: *std.Build) void {
         .raygui = true,
     });
     exe.linkLibrary(raylib_artifact);
+
+    const zig_objc = b.dependency("zig_objc", .{
+        .target = target,
+        .optimize = optimize,
+    });
+
+    exe.root_module.addImport("zig-objc", zig_objc.module("objc"));
 
     // This declares intent for the executable to be installed into the
     // standard location when the user invokes the "install" step (the default

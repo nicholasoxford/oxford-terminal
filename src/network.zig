@@ -23,9 +23,13 @@ pub fn fetchStockData(
     std.debug.print("Fetching stock data for {s}\n", .{symbol});
 
     const baseUrl = "https://financialmodelingprep.com/api/v3/historical-price-full/";
-    const apiKey = "?apikey=ZMbEKCtq28UHoqaC5IZO0CCzACvcs6Az";
-    const url = try std.fmt.allocPrintZ(allocator, "{s}{s}", .{ baseUrl, symbol, apiKey });
+    const apiKey = "ZMbEKCtq28UHoqaC5IZO0CCzACvcs6Az"; // Make sure this is your actual API key
+    const url = try std.fmt.allocPrintZ(allocator, "{s}{s}?apikey={s}", .{ baseUrl, symbol, apiKey });
     defer allocator.free(url);
+
+    // Print the full URL for debugging
+    std.debug.print("Full URL: {s}\n", .{url});
+    std.debug.print("CURL URL: {s}\n", .{std.mem.span(url.ptr)});
     // Global CURL initializations
     if (curl.curl_global_init(curl.CURL_GLOBAL_ALL) != curl.CURLE_OK)
         return NetworkError.CURLGlobalInitFailed;
@@ -38,10 +42,12 @@ pub fn fetchStockData(
     // Response buffer
     var response_buffer = std.ArrayList(u8).init(allocator);
     defer response_buffer.deinit();
-    std.log.debug("DYNAMIC URL: {s}", .{std.mem.span(url.ptr)});
+
     // Set CURL options
     if (curl.curl_easy_setopt(handle, curl.CURLOPT_URL, url.ptr) != curl.CURLE_OK)
         return NetworkError.CouldNotSetURL;
+
+    std.debug.print("CURL URL: {s}\n", .{std.mem.span(url.ptr)});
     if (curl.curl_easy_setopt(handle, curl.CURLOPT_WRITEFUNCTION, writeToArrayListCallback) != curl.CURLE_OK)
         return NetworkError.CouldNotSetWriteCallback;
     if (curl.curl_easy_setopt(handle, curl.CURLOPT_WRITEDATA, &response_buffer) != curl.CURLE_OK)
@@ -54,7 +60,11 @@ pub fn fetchStockData(
     std.debug.print("Got response of {d} bytes\n", .{response_buffer.items.len});
 
     // Parse the JSON response
-    const parse_result = try std.json.parseFromSlice(data.StockInfoResponse, allocator, response_buffer.items, .{});
+    const parse_result = std.json.parseFromSlice(data.StockInfoResponse, allocator, response_buffer.items, .{}) catch |err| {
+        std.debug.print("Error: {}\n", .{err});
+        std.debug.print("Body: {s}\n", .{response_buffer.items});
+        return err;
+    };
     defer parse_result.deinit();
 
     // Process the historical data

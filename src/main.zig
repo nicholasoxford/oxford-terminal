@@ -41,10 +41,10 @@ fn rayMain() !void {
         // Update
         switch (app_state) {
             .Menu => {
-                main_menu.handleState();
+                try main_menu.handleState();
             },
             .AlgorithmicTrading => {
-                trading_menu.handleState();
+                try trading_menu.handleState();
             },
             .NeuralNetworks => {
                 // Handle Neural Networks state

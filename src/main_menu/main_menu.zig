@@ -2,7 +2,7 @@ const std = @import("std");
 const ray = @import("../raylib.zig");
 const AppState = @import("../app_state.zig");
 const MenuModule = @import("../ui/menu.zig");
-
+const objc = @import("../objC.zig");
 pub const MainMenu = struct {
     app_state: *AppState.AppState,
     menu: MenuModule.Menu,
@@ -24,7 +24,9 @@ pub const MainMenu = struct {
         };
     }
 
-    pub fn handleState(self: *MainMenu) void {
+    pub fn handleState(self: *MainMenu) !void {
+        const is_at_least_macos_14 = objc.macosVersionAtLeast(14, 0, 0);
+        try std.log.debug("Is at least macOS 14: {d}", .{(is_at_least_macos_14)}) catch {};
         self.menu.handleInput();
     }
 
