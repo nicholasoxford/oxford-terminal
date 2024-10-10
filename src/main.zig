@@ -44,7 +44,7 @@ fn rayMain() !void {
                 try main_menu.handleState();
             },
             .AlgorithmicTrading => {
-                try trading_menu.handleState();
+                trading_menu.handleState();
             },
             .NeuralNetworks => {
                 // Handle Neural Networks state
