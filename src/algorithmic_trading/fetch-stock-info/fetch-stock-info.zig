@@ -180,7 +180,6 @@ pub const FetchStockInfo = struct {
         }
 
         if (ray.IsKeyPressed(ray.KEY_ENTER) and letterCount > 0) {
-            std.debug.print("Enter pressed\n", .{});
             fetchingStockInfo.* = true;
             self.stockTicker = std.fmt.allocPrint(self.gpa, "{s}", .{tickerSymbol}) catch |err| {
                 std.debug.print("Error allocating memory for stock ticker: {}\n", .{err});

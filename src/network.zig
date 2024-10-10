@@ -34,17 +34,6 @@ pub fn fetchStockData(
 
     const url = try std.fmt.allocPrintZ(allocator, "{s}{s}?apikey={s}", .{ baseUrl, trimmedSymbol, apiKey });
 
-    // reordering the variables just to see what happens
-    const symbolUrl = try std.fmt.allocPrintZ(allocator, "{s}{s}?symbol={s}", .{ baseUrl, apiKey, symbol });
-    std.debug.print("trimmedUrl {}\n", .{std.zig.fmtEscapes(trimmedSymbol)});
-
-    // Print the full URL for debugging
-    std.debug.print("EXPECTED URL: {s}\n", .{url});
-    std.debug.print("ACTUAL URL: {s}\n", .{std.mem.span(url.ptr)});
-    std.debug.print("API KEY {}\n", .{std.zig.fmtEscapes(apiKey)});
-    std.debug.print("EXPEXTED SYMBOL URL: https://financialmodelingprep.com/api/v3/historical-price-full/ZMbEKCtq28UHoqaC5IZO0CCzACvcs6Az&symbol=AAPL\n", .{});
-    std.debug.print("SYMBOl {}\n", .{std.zig.fmtEscapes(symbol)});
-    std.debug.print("ACTUAL SYMBOL URL: {}\n", .{std.zig.fmtEscapes(std.mem.span(symbolUrl.ptr))});
     // Global CURL initializations
     if (curl.curl_global_init(curl.CURL_GLOBAL_ALL) != curl.CURLE_OK)
         return NetworkError.CURLGlobalInitFailed;
