@@ -14,22 +14,37 @@ pub const NetworkError = error{
     JSONParseError,
 };
 
+pub fn removeTrailingNullBytes(slice: []const u8) []const u8 {
+    var end: usize = slice.len;
+    while (end > 0 and slice[end - 1] == 0) {
+        end -= 1;
+    }
+    return slice[0..end];
+}
+
 /// Fetches stock data for a given symbol.
 pub fn fetchStockData(
     allocator: std.mem.Allocator,
     symbol: []const u8,
     data_out: *std.ArrayList(data.StockInfoObject),
 ) !void {
-    std.debug.print("Fetching stock data for {s}\n", .{symbol});
-
     const baseUrl = "https://financialmodelingprep.com/api/v3/historical-price-full/";
     const apiKey = "ZMbEKCtq28UHoqaC5IZO0CCzACvcs6Az"; // Make sure this is your actual API key
-    const url = try std.fmt.allocPrintZ(allocator, "{s}{s}?apikey={s}", .{ baseUrl, symbol, apiKey });
-    defer allocator.free(url);
+    const trimmedSymbol = removeTrailingNullBytes(symbol);
+
+    const url = try std.fmt.allocPrintZ(allocator, "{s}{s}?apikey={s}", .{ baseUrl, trimmedSymbol, apiKey });
+
+    // reordering the variables just to see what happens
+    const symbolUrl = try std.fmt.allocPrintZ(allocator, "{s}{s}?symbol={s}", .{ baseUrl, apiKey, symbol });
+    std.debug.print("trimmedUrl {}\n", .{std.zig.fmtEscapes(trimmedSymbol)});
 
     // Print the full URL for debugging
-    std.debug.print("Full URL: {s}\n", .{url});
-    std.debug.print("CURL URL: {s}\n", .{std.mem.span(url.ptr)});
+    std.debug.print("EXPECTED URL: {s}\n", .{url});
+    std.debug.print("ACTUAL URL: {s}\n", .{std.mem.span(url.ptr)});
+    std.debug.print("API KEY {}\n", .{std.zig.fmtEscapes(apiKey)});
+    std.debug.print("EXPEXTED SYMBOL URL: https://financialmodelingprep.com/api/v3/historical-price-full/ZMbEKCtq28UHoqaC5IZO0CCzACvcs6Az&symbol=AAPL\n", .{});
+    std.debug.print("SYMBOl {}\n", .{std.zig.fmtEscapes(symbol)});
+    std.debug.print("ACTUAL SYMBOL URL: {}\n", .{std.zig.fmtEscapes(std.mem.span(symbolUrl.ptr))});
     // Global CURL initializations
     if (curl.curl_global_init(curl.CURL_GLOBAL_ALL) != curl.CURLE_OK)
         return NetworkError.CURLGlobalInitFailed;
@@ -47,7 +62,6 @@ pub fn fetchStockData(
     if (curl.curl_easy_setopt(handle, curl.CURLOPT_URL, url.ptr) != curl.CURLE_OK)
         return NetworkError.CouldNotSetURL;
 
-    std.debug.print("CURL URL: {s}\n", .{std.mem.span(url.ptr)});
     if (curl.curl_easy_setopt(handle, curl.CURLOPT_WRITEFUNCTION, writeToArrayListCallback) != curl.CURLE_OK)
         return NetworkError.CouldNotSetWriteCallback;
     if (curl.curl_easy_setopt(handle, curl.CURLOPT_WRITEDATA, &response_buffer) != curl.CURLE_OK)

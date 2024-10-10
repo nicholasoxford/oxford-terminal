@@ -3,6 +3,7 @@ const ray = @import("raylib.zig");
 
 const AppState = @import("app_state.zig");
 const MainMenu = @import("main_menu/main_menu.zig");
+const objc = @import("objC.zig");
 const TradingMenu = @import("algorithmic_trading/trading_menu.zig").TradingMenu;
 
 pub fn main() !void {
@@ -36,6 +37,8 @@ fn rayMain() !void {
     // Selected menu option
     var main_menu = MainMenu.MainMenu.init(&app_state);
 
+    const is_at_least_macos_14 = try objc.checkMacOSAndMetal(14, 2, 2);
+    std.log.debug("Is at least macOS 14.2.2: {d}", .{@intFromBool(is_at_least_macos_14)});
     // Main loop
     while (!ray.WindowShouldClose()) {
         // Update

@@ -46,7 +46,7 @@ pub const FetchStockInfo = struct {
         }
     }
 
-    fn fetchStockData(self: *FetchStockInfo, stockTicker: []const u8, hasFetchedInfo: *bool, fetchingStockInfo: *bool) !void {
+    fn fetchStockInfo(self: *FetchStockInfo, stockTicker: []const u8, hasFetchedInfo: *bool, fetchingStockInfo: *bool) !void {
         // Clear previous data
         for (self.stockInfo.items) |*item| {
             item.deinit(self.gpa);
@@ -188,7 +188,7 @@ pub const FetchStockInfo = struct {
                 return;
             };
 
-            self.fetchStockData(self.stockTicker, hasFetchedInfo, fetchingStockInfo) catch |err| {
+            self.fetchStockInfo(self.stockTicker, hasFetchedInfo, fetchingStockInfo) catch |err| {
                 std.debug.print("Error fetching stock info: {}\n", .{err});
                 fetchingStockInfo.* = false;
                 self.gpa.free(self.stockTicker);

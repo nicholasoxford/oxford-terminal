@@ -36,7 +36,10 @@ pub fn build(b: *std.Build) void {
     exe.linkFramework("CoreServices");
     exe.linkFramework("Foundation");
     exe.linkFramework("AppKit");
+    exe.linkFramework("QuartzCore");
     exe.linkFramework("ColorSync");
+    exe.linkFramework("Metal");
+    exe.linkFramework("MetalKit");
     exe.linkFramework("ImageIO");
     exe.linkFramework("CFNetwork");
     exe.linkSystemLibrary(
