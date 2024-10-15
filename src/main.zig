@@ -2,9 +2,9 @@ const std = @import("std");
 const ray = @import("raylib.zig");
 
 const AppState = @import("app_state.zig");
-const MainMenu = @import("main_menu/main_menu.zig");
+const MainMenu = @import("main_menu.zig");
 const objc = @import("objC.zig");
-const TradingMenu = @import("algorithmic_trading/trading_menu.zig").TradingMenu;
+const TradingMenu = @import("trading_menu.zig").TradingMenu;
 
 pub fn main() !void {
     try rayMain();

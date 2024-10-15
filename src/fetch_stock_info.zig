@@ -1,7 +1,7 @@
-const ray = @import("../../raylib.zig");
+const ray = @import("raylib.zig");
 const std = @import("std");
-const data = @import("../../data.zig");
-const network = @import("../../network.zig");
+const data = @import("data.zig");
+const network = @import("network.zig");
 const curl = @cImport({
     @cInclude("curl/curl.h");
 });
@@ -72,8 +72,6 @@ pub const FetchStockInfo = struct {
             ray.DrawText("No stock data available", 190, 200, 20, ray.WHITE);
             return;
         }
-
-        ray.DrawText("Stock data available", 150, 400, 20, ray.WHITE);
 
         // Draw the actual graph here
         const startX: f32 = 100;

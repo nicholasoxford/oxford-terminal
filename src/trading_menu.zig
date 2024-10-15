@@ -1,8 +1,8 @@
-const ray = @import("../raylib.zig");
+const ray = @import("raylib.zig");
 const std = @import("std");
-const AppState = @import("../app_state.zig");
-const MenuModule = @import("../ui/menu.zig");
-const FetchStockInfo = @import("./fetch-stock-info/fetch-stock-info.zig").FetchStockInfo;
+const AppState = @import("app_state.zig");
+const MenuModule = @import("ui/menu.zig");
+const FetchStockInfo = @import("fetch_stock_info.zig").FetchStockInfo;
 
 pub const TradingMenuState = enum {
     TradingMenu,

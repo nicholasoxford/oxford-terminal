@@ -1,7 +1,7 @@
 const std = @import("std");
-const ray = @import("../raylib.zig");
-const AppState = @import("../app_state.zig");
-const MenuModule = @import("../ui/menu.zig");
+const ray = @import("raylib.zig");
+const AppState = @import("app_state.zig");
+const MenuModule = @import("ui/menu.zig");
 
 pub const MainMenu = struct {
     app_state: *AppState.AppState,

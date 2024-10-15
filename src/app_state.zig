@@ -1,4 +1,4 @@
-const TradingMenu = @import("algorithmic_trading/trading_menu.zig").TradingMenu;
+const TradingMenu = @import("trading_menu.zig").TradingMenu;
 
 pub const AppState = enum {
     Menu,
