@@ -29,7 +29,7 @@ pub fn fetchStockData(
     data_out: *std.ArrayList(data.StockInfoObject),
 ) !void {
     const baseUrl = "https://financialmodelingprep.com/api/v3/historical-price-full/";
-    const apiKey = "ZMbEKCtq28UHoqaC5IZO0CCzACvcs6Az"; // Make sure this is your actual API key
+    const apiKey = "";
     const trimmedSymbol = removeTrailingNullBytes(symbol);
 
     const url = try std.fmt.allocPrintZ(allocator, "{s}{s}?apikey={s}", .{ baseUrl, trimmedSymbol, apiKey });
